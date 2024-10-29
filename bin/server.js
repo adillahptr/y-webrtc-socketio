@@ -16,8 +16,8 @@ const pingTimeout = 30000
 const host = process.env.HOST || '0.0.0.0'
 const port = process.env.PORT || 3000
 
-const key = readFileSync("./bin/key.pem");
-const cert = readFileSync("./bin/cert.pem");
+const key = readFileSync("./bin/private.key");
+const cert = readFileSync("./bin/certificate.crt");
 
 const server = https.createServer({key, cert},(request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/plain' })
@@ -35,7 +35,7 @@ const onconnection = conn => {
     if (typeof message === 'string') {
       message = JSON.parse(message)
     }
-    if (message && message.type && !closed) {
+    if (message && message.type) {
       switch (message.type) {
         case 'subscribe':
           /** @type {Array<string>} */ (message.topics || []).forEach(topicName => {
